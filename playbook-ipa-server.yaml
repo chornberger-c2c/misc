@@ -1,0 +1,34 @@
+---
+
+- name declare vars
+
+
+- name check if config exists
+  stat:
+  	path: /etc/ipa/default.conf
+  	state: present
+  register: conf_file.stat.exists
+
+- name check if sysrestore is present
+    stat:
+      path: /var/lib/ipa/sysrestore/sysrestore.state
+      state: present
+    register: sysrestore.stat.file
+
+- name install ipa-server
+  yum:
+    name: ipa-server
+
+- name install ipa-server-dns
+  yum:
+    name: ipa-server-dns
+
+- name launch ipa-server-install
+  command: ipa-server-install -U -p passxxxx -a passyyyy -r realmXY --setup-dns --no-forwarders --auto-reverse --reverse-zone=xxx --allow-zone-overlap
+    when: conf_file.stat.exists == False and sysrestore.stat.exists == False
+
+
+
+
+
+
